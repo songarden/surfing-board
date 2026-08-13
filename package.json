@@ -1,0 +1,30 @@
+{
+  "name": "surfboard-scheduler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "사내 보드게임 동호회 '서핑보드' 평일 모임 일정 조율 서비스",
+  "scripts": {
+    "up": "docker compose up -d --build",
+    "down": "docker compose down",
+    "restart": "docker compose restart app",
+    "logs": "docker compose logs -f app",
+    "test": "docker compose exec -T app sh -c \"node --test tests/*.test.js\"",
+    "smoke": "bash scripts/smoke.sh",
+    "backup": "docker compose exec -T app node scripts/backup.js",
+    "user:create": "docker compose exec app node scripts/create-user.js",
+    "user:passwd": "docker compose exec app node scripts/reset-password.js",
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test:local": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.5.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "ws": "^8.18.0"
+  },
+  "engines": { "node": ">=20" }
+}

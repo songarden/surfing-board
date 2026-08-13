@@ -1,0 +1,25 @@
+services:
+  app:
+    build: .
+    container_name: surfboard
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+    ports:
+      # 집/사내망에서만 열려면 "127.0.0.1:8888:8888" 으로 바꾸고 프록시나 Tailscale 을 앞에 두세요.
+      - "8888:8888"
+    volumes:
+      - ./data:/app/data
+
+# 사내망 밖에서도 쓰려면 아래 프록시를 함께 띄우세요. (docker compose --profile proxy up -d)
+#  caddy:
+#    image: caddy:2
+#    restart: unless-stopped
+#    profiles: ["proxy"]
+#    ports: ["80:80", "443:443"]
+#    volumes:
+#      - ./Caddyfile:/etc/caddy/Caddyfile
+#      - caddy_data:/data
+# volumes:
+#   caddy_data:
