@@ -80,48 +80,35 @@ npm run logs
 
 ## 📸 화면
 
-<table>
-<tr>
-<td width="50%">
+### 로그인 · 회원가입
 
-**로그인 · 회원가입**
+누구나 가입할 수 있고, 동아리 참여는 초대 링크로만 됩니다.
 
-<img src="readme-assets/login.png" alt="로그인 화면"/>
+<img src="readme-assets/login.png" alt="로그인 화면" width="100%"/>
 
-누구나 가입할 수 있고, 동아리 참여는 초대 링크로만.
+<br/>
 
-</td>
-<td width="50%">
+### 내 동아리
 
-**내 동아리**
+속한 동아리와 이번 달 확인이 필요한 개수를 한눈에 봅니다.
 
-<img src="readme-assets/group-list.png" alt="동아리 목록 화면"/>
+<img src="readme-assets/group-list.png" alt="동아리 목록 화면" width="100%"/>
 
-속한 동아리와 이번 달 확인 필요 개수를 한눈에.
+<br/>
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+### 동아리 채팅
 
-**동아리 채팅**
+달력 옆 접이식 사이드 패널(380px). @멘션, 안 읽은 개수, 메시지 수정·삭제.
 
-<img src="readme-assets/chat.png" alt="채팅 사이드 패널"/>
+<img src="readme-assets/chat.png" alt="채팅 사이드 패널" width="100%"/>
 
-달력 옆 접이식 패널(380px). @멘션과 안 읽음 개수 표시.
+<br/>
 
-</td>
-<td width="50%">
+### 동아리 관리
 
-**동아리 관리**
+초대 링크 발급·회수, 회원 색상 지정, 회장직 위임, 내보내기.
 
-<img src="readme-assets/admin-console.png" alt="동아리 관리 화면"/>
-
-초대 링크 발급·회수, 회원 색상, 회장직 위임, 내보내기.
-
-</td>
-</tr>
-</table>
+<img src="readme-assets/admin-console.png" alt="동아리 관리 화면" width="100%"/>
 
 <br/>
 
