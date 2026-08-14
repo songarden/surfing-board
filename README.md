@@ -16,6 +16,7 @@
 ![Docker](https://img.shields.io/badge/Docker-compose-2496ED?logo=docker&logoColor=white)
 ![Build](https://img.shields.io/badge/build_step-none-success)
 ![Self-hosted](https://img.shields.io/badge/self--hosted-폐쇄망_OK-6C5CE7)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
 <br/>
 
@@ -221,7 +222,6 @@ npm run test:local  # 로컬 Node 20+ 에서
 
 ## 📄 라이선스
 
-아직 라이선스 파일이 없습니다. 사내용으로 시작한 프로젝트라 배포 조건을 정하지 않았습니다.
-외부 공개·재사용을 허용하려면 `LICENSE` 를 추가해 주세요.
+[MIT](LICENSE) © 2026 손정원
 
 번들된 폰트는 각자의 라이선스를 따릅니다 — [Pretendard (OFL)](public/fonts/pretendard-LICENSE.txt) · [Space Grotesk (OFL)](public/fonts/space-grotesk-OFL.txt).
