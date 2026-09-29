@@ -75,6 +75,41 @@ export async function copyText(text) {
   } catch { return false; }
 }
 
+// ---------- 폼 ----------
+const EYE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.7 6A9.6 9.6 0 0 1 12 5.8c6 0 9.5 6.2 9.5 6.2a17.6 17.6 0 0 1-3.5 4.1"/><path d="M6.4 7.8A17.3 17.3 0 0 0 2.5 12S6 18.2 12 18.2a9.7 9.7 0 0 0 3.7-.7"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="m3.6 3.6 16.8 16.8"/></svg>';
+
+/**
+ * 눈 아이콘으로 보이기·숨기기를 토글하는 비밀번호 입력.
+ * [감싼 노드, input] 을 돌려주므로 값은 평소처럼 input 으로 다룹니다.
+ *   const [box, password] = passwordInput({ autocomplete: 'current-password' });
+ */
+export function passwordInput(props = {}) {
+  const input = el('input', { class: 'input', type: 'password', ...props });
+  const toggle = el('button', { class: 'pw-toggle', type: 'button', tabindex: '-1' });
+  apply(false);
+
+  toggle.addEventListener('click', () => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    apply(show);
+    // 눌러도 커서는 입력칸에 그대로 두어야 이어서 타이핑할 수 있습니다.
+    input.focus();
+    const end = input.value.length;
+    try { input.setSelectionRange(end, end); } catch { /* 일부 브라우저는 막습니다 */ }
+  });
+
+  function apply(shown) {
+    toggle.innerHTML = shown ? EYE_OFF : EYE;
+    const label = shown ? '비밀번호 숨기기' : '비밀번호 보기';
+    toggle.setAttribute('aria-label', label);
+    toggle.setAttribute('title', label);
+    toggle.setAttribute('aria-pressed', shown ? 'true' : 'false');
+  }
+
+  return [el('div', { class: 'pw-wrap' }, input, toggle), input];
+}
+
 // ---------- 모달 ----------
 /**
  * 확인 모달. 예를 누르면 true, 취소·배경 클릭·ESC 는 false.

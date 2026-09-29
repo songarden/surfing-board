@@ -1,11 +1,11 @@
 import { api, qs } from './api.js';
-import { $, brandMark, el, render, toastError } from './ui.js';
+import { $, brandMark, el, passwordInput, render, toastError } from './ui.js';
 
 const next = qs('next') || '/clubs.html';
 const app = $('#app');
 
 const username = el('input', { class: 'input', autocomplete: 'username', placeholder: 'minsu' });
-const password = el('input', { class: 'input', type: 'password', autocomplete: 'current-password' });
+const [passwordBox, password] = passwordInput({ autocomplete: 'current-password' });
 const error = el('div', { class: 'error-text' });
 const submit = el('button', { class: 'btn btn-primary btn-block', type: 'submit' }, '로그인');
 
@@ -13,7 +13,7 @@ const form = el('form', { onsubmit: onSubmit },
   el('div', { class: 'lead' }, '다시 오셨네요'),
   el('div', { class: 'muted', style: 'margin-bottom:24px;' }, '모임 날짜, 이제 단톡방에서 그만 정해요'),
   el('label', { class: 'field' }, el('span', {}, '아이디'), username),
-  el('label', { class: 'field' }, el('span', {}, '비밀번호'), password),
+  el('label', { class: 'field' }, el('span', {}, '비밀번호'), passwordBox),
   error,
   submit);
 

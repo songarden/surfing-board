@@ -9,6 +9,7 @@ import {
 } from '../lib/permissions.js';
 import { buildCalendar, previousMonth, selectableDays } from '../lib/calendar.js';
 import { announceMonthConfirmed, announceAvailabilityChanged } from '../lib/chat-events.js';
+import { buildShareCard, shareText, shareUrl, sharePath } from '../lib/share.js';
 
 export const calendarRoutes = Router();
 calendarRoutes.use(requireAuth);
@@ -54,6 +55,39 @@ calendarRoutes.get('/:id/calendar', loadClub, (req, res) => {
     ...data,
     club: { ...req.club, my_role: req.membership?.role ?? null },
     my_month_state: req.membership ? monthState(req.membership.id, month) : null
+  });
+});
+
+/**
+ * GET /api/clubs/:id/share?month=YYYY-MM — 메신저(네이버 웍스)에 붙여넣을 공유 꾸러미.
+ *
+ * 회원만 만들 수 있습니다. 만들어진 링크 자체는 로그인 없이 열리므로(미리보기 크롤러 때문에),
+ * **"누가 링크를 만들 수 있는가" 가 유일한 관문**입니다. 소속 없는 서비스 관리자도 막습니다.
+ * 응답의 title·description 은 공유 페이지의 og 태그와 **같은 문자열**입니다 — 프런트가
+ * 대화방 미리보기를 그대로 흉내 내 보여줄 수 있게 하려고요.
+ */
+calendarRoutes.get('/:id/share', loadClub, requireActiveClub, requireMembership, (req, res) => {
+  const month = String(req.query.month || thisMonth());
+  if (!MONTH_RE.test(month)) return res.status(400).json({ error: 'month 는 YYYY-MM 형식으로 보내주세요.' });
+
+  const card = buildShareCard(req.club, month);
+  const url = shareUrl(req, req.club.id, month);
+  res.json({
+    month,
+    club: { id: req.club.id, name: req.club.name },
+    url,                                   // .env 의 PUBLIC_BASE_URL 기준 절대 주소
+    path: sharePath(req.club.id, month),
+    title: card.title,                     // = og:title
+    description: card.description,         // = og:description
+    text: shareText(card, url),            // 대화방에 그대로 붙여넣는 본문 (마지막 줄이 링크)
+    dates: card.dates,
+    member_count: card.member_count,
+    best_count: card.best_count,
+    confirmed_count: card.confirmed_count,
+    unconfirmed_count: card.unconfirmed_count,
+    full_party: card.full_party,
+    past_excluded: card.past_excluded,
+    today: card.today
   });
 });
 

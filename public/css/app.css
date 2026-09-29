@@ -144,6 +144,18 @@ textarea.input { resize: vertical; min-height: 72px; }
 select.input { padding: 10px 11px; background: #fff; border-radius: 8px; font-size: 12.5px; width: auto; }
 .input-sm { border-radius: 10px; padding: 10px 12px; font-size: 13.5px; }
 
+/* 비밀번호 입력 + 눈 아이콘 토글 */
+.pw-wrap { position: relative; display: flex; align-items: stretch; }
+.pw-wrap > .input { padding-right: 44px; }
+.pw-toggle {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 42px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 0; padding: 0; color: var(--faint); cursor: pointer;
+  border-radius: 0 11px 11px 0;
+}
+.pw-toggle:hover { color: var(--sub); }
+.pw-toggle[aria-pressed="true"] { color: var(--indigo); }
+
 /* ---------- 버튼 ---------- */
 .btn {
   background: #fff; border: 1px solid var(--line-2); color: var(--ink-2);
@@ -545,3 +557,94 @@ select.input { padding: 10px 11px; background: #fff; border-radius: 8px; font-si
 .chat-send:disabled { background: #D8DAE3; cursor: not-allowed; }
 .chat-hint { font-size: 11px; color: var(--faint); margin-top: 7px; }
 .chat-hint-off { color: var(--maybe-deep); }
+
+/* ---------- 추천 날짜 공유 (네이버 웍스) ----------
+   세 자리에 씁니다:
+     .hero-share        달력 히어로 안의 공유 버튼
+     .share-mock~.share-note  공유 모달 — 대화방에서 어떻게 보일지 흉내 낸 미리보기
+     .share-wrap~.share-foot  /share/:id/:month 공개 요약 페이지 (서버가 문자열로 그립니다)
+   -------------------------------------------------------------------- */
+.hero-share {
+  margin-top: 12px; background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .34);
+  color: #fff; border-radius: var(--r-btn); padding: 7px 13px; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+}
+.hero-share:hover { background: rgba(255, 255, 255, .3); }
+
+/* 공유 모달은 미리보기 카드가 들어가서 기본 모달보다 넓어야 합니다. */
+.modal-wide { max-width: 520px; }
+
+.share-warn {
+  margin-top: 14px; background: #FFF8EC; border: 1px solid #F5DFB4; border-radius: 11px;
+  padding: 10px 12px; font-size: 12.5px; color: var(--maybe-deep); line-height: 1.55;
+}
+.share-cap {
+  font-size: 11.5px; font-weight: 600; color: var(--sub);
+  margin: 16px 0 6px; letter-spacing: .01em;
+}
+.share-textarea {
+  font-size: 12.5px; line-height: 1.6; resize: vertical; white-space: pre-wrap;
+  font-family: var(--sans); cursor: text;
+}
+.share-note { font-size: 11.5px; color: var(--dim); line-height: 1.6; margin-top: 10px; }
+
+/* 대화방 흉내. 메신저 배경 위에 말풍선 하나가 떠 있는 모양입니다. */
+.share-mock { margin-top: 16px; background: var(--input); border-radius: 14px; padding: 12px; }
+.share-mock-cap { font-size: 11px; font-weight: 600; color: var(--dim); margin-bottom: 8px; }
+.share-mock-bubble {
+  background: var(--card); border: 1px solid var(--line-2); border-radius: 13px 13px 13px 4px;
+  padding: 11px 13px; box-shadow: var(--sh-card);
+}
+.share-mock-text { font-size: 12.5px; line-height: 1.65; color: var(--ink); white-space: pre-wrap; }
+.share-mock-link {
+  font-size: 12px; color: var(--indigo); text-decoration: underline; word-break: break-all;
+  margin-top: 4px;
+}
+/* 링크 메타데이터가 뜨는 자리. 여기 글자가 곧 공유 페이지의 og:title / og:description 입니다. */
+.share-preview {
+  margin-top: 9px; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden;
+  background: #FAFBFC; padding: 10px 12px;
+}
+.share-preview-title {
+  font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.4;
+  letter-spacing: -.01em; margin-bottom: 4px;
+}
+.share-preview-desc { font-size: 11.5px; color: var(--sub); line-height: 1.55; }
+.share-preview-host { font-size: 10.5px; color: var(--faint); margin-top: 6px; font-family: var(--mono); }
+
+/* ---------- 공개 요약 페이지 ---------- */
+.share-wrap { max-width: 520px; padding-top: 48px; }
+.share-brand { justify-content: center; margin-bottom: 18px; }
+.share-card { text-align: center; }
+.share-hero-title {
+  font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.3;
+  margin: 10px 0 8px; color: var(--ink);
+}
+.share-hero-sub { font-size: 13.5px; color: var(--sub); line-height: 1.6; }
+.share-dates { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 8px; }
+.share-date {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--input); border: 1px solid var(--line-2); border-radius: 12px;
+  padding: 12px 14px; text-align: left;
+}
+.share-date-day { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; }
+/* 요일은 이 페이지의 핵심 값입니다. 날짜 숫자에 묻히지 않게 인디고 칩으로 세웁니다. */
+.share-date-dow {
+  font-size: 12px; font-weight: 700; color: var(--indigo);
+  background: rgba(93, 95, 239, .1); border-radius: var(--r-pill); padding: 3px 10px;
+}
+.share-count { font-size: 12.5px; color: var(--sub); margin-left: auto; }
+.share-count b { color: var(--ok-deep); font-weight: 700; }
+.share-full {
+  font-size: 11.5px; font-weight: 700; color: #fff; background: var(--indigo);
+  border-radius: var(--r-pill); padding: 4px 11px; margin-left: auto;
+}
+.share-date-note { font-size: 12px; color: var(--dim); width: 100%; }
+.share-meta {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 14px;
+  font-size: 12px; color: var(--dim); margin-top: 18px;
+}
+.share-meta b { color: var(--ink-2); }
+.share-cta { display: inline-block; margin-top: 20px; padding: 11px 22px; }
+/* 가운데 정렬 카드라 폭을 좁혀야 줄이 고르게 떨어집니다 (안 좁히면 마지막 줄에 한 글자만 남습니다). */
+.share-foot { margin-top: 16px; line-height: 1.7; max-width: 370px; margin-left: auto; margin-right: auto; }
