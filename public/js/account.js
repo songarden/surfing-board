@@ -1,5 +1,5 @@
 import { api, requireMe, toLogin } from './api.js';
-import { $, confirmModal, el, loadingBox, pageHead, render, roleTag, toast, toastError } from './ui.js';
+import { $, confirmModal, el, loadingBox, pageHead, passwordInput, render, roleTag, toast, toastError } from './ui.js';
 
 const app = $('#app');
 render(app, loadingBox());
@@ -35,14 +35,14 @@ function profileCard() {
 }
 
 function passwordCard() {
-  const current = el('input', { class: 'input', type: 'password', autocomplete: 'current-password' });
-  const next = el('input', { class: 'input', type: 'password', autocomplete: 'new-password', placeholder: '8자 이상' });
+  const [currentBox, current] = passwordInput({ autocomplete: 'current-password' });
+  const [nextBox, next] = passwordInput({ autocomplete: 'new-password', placeholder: '8자 이상' });
   const error = el('div', { class: 'error-text' });
 
   return el('div', { class: 'card' },
     el('div', { class: 'card-title' }, '비밀번호 변경'),
-    el('label', { class: 'field' }, el('span', {}, '지금 비밀번호'), current),
-    el('label', { class: 'field' }, el('span', {}, '새 비밀번호'), next),
+    el('label', { class: 'field' }, el('span', {}, '지금 비밀번호'), currentBox),
+    el('label', { class: 'field' }, el('span', {}, '새 비밀번호'), nextBox),
     error,
     el('button', {
       class: 'btn btn-primary', style: 'padding:9px 16px;',

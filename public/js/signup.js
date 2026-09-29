@@ -1,12 +1,12 @@
 import { api, qs } from './api.js';
-import { $, brandMark, el, render } from './ui.js';
+import { $, brandMark, el, passwordInput, render } from './ui.js';
 
 const next = qs('next') || '/clubs.html';
 const app = $('#app');
 
 const username = el('input', { class: 'input', autocomplete: 'username', placeholder: '영문 소문자·숫자 3~24자' });
 const displayName = el('input', { class: 'input', placeholder: '달력에 보일 이름' });
-const password = el('input', { class: 'input', type: 'password', autocomplete: 'new-password', placeholder: '8자 이상' });
+const [passwordBox, password] = passwordInput({ autocomplete: 'new-password', placeholder: '8자 이상' });
 const error = el('div', { class: 'error-text' });
 const submit = el('button', { class: 'btn btn-primary btn-block', type: 'submit' }, '가입하고 시작하기');
 
@@ -36,7 +36,7 @@ render(app,
       el('div', { class: 'muted', style: 'margin-bottom:24px;' }, '가입한 뒤 초대 링크로 동아리에 들어갈 수 있어요'),
       el('label', { class: 'field' }, el('span', {}, '아이디 · 나중에 바꿀 수 없어요'), username),
       el('label', { class: 'field' }, el('span', {}, '표시 이름'), displayName),
-      el('label', { class: 'field' }, el('span', {}, '비밀번호'), password),
+      el('label', { class: 'field' }, el('span', {}, '비밀번호'), passwordBox),
       error,
       submit)),
   el('div', { class: 'tiny', style: 'text-align:center;margin-top:18px;' },

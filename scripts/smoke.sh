@@ -2,6 +2,7 @@
 # 떠 있는 서버에 실제 흐름을 한 번 흘려봅니다:  npm run smoke
 #
 # 가입 → 동아리 생성 → 초대 발급 → 다른 사람이 수락 → 일정 표시 → 집계 확인
+# → 추천 날짜 공유 링크(og 메타데이터·서명 확인)
 # → 확정(잠금) → 잠긴 채 변경 시도(409) → 수정 모드 → 확정 저장
 #
 # 임시 계정을 만들기 때문에 운영 DB 에 흔적이 남습니다. 끝에 스스로 정리합니다.
@@ -36,8 +37,11 @@ check () {
   fi
   LAST_BODY=$body
 }
-json () { echo "$LAST_BODY" | sed -n "s/.*\"$1\":\([0-9]*\).*/\1/p" | head -n1; }
-jstr () { echo "$LAST_BODY" | sed -n "s/.*\"$1\":\"\([^\"]*\)\".*/\1/p" | head -n1; }
+# ⚠️ LC_ALL=C 가 필요합니다. 공유 API 응답에 이모지가 들어오는데, UTF-8 로케일의 sed 는
+#    그 바이트열을 만나면 `[^"]` 를 잘못 먹어 닫는 따옴표를 넘어서까지 잡습니다
+#    (`path` 를 뽑으면 뒤 필드가 통째로 딸려 옵니다). 바이트로 보게 하면 정확합니다.
+json () { echo "$LAST_BODY" | LC_ALL=C sed -n "s/.*\"$1\":\([0-9]*\).*/\1/p" | head -n1; }
+jstr () { echo "$LAST_BODY" | LC_ALL=C sed -n "s/.*\"$1\":\"\([^\"]*\)\".*/\1/p" | head -n1; }
 
 step "1. 헬스체크"
 check 200 "GET /api/health" curl "$BASE/api/health"
@@ -86,7 +90,23 @@ step "7. 달력 집계 (추천 날짜·확인 현황)"
 check 200 "GET /api/clubs/$CLUB/calendar?month=$MONTH" curl -b "$JAR_A" "$BASE/api/clubs/$CLUB/calendar?month=$MONTH"
 echo "  요약: $(echo "$LAST_BODY" | tr ',' '\n' | grep -E '"(member_count|confirmed_count|best_count)"' | tr '\n' ' ')"
 
-step "8. 확정 → 잠금 확인 → 수정 모드 → 확정 저장"
+step "8. 추천 날짜 공유 (네이버 웍스 미리보기)"
+check 200 "GET /api/clubs/$CLUB/share" curl -b "$JAR_B" "$BASE/api/clubs/$CLUB/share?month=$MONTH"
+SHARE_PATH=$(jstr path)
+case "$(jstr url)" in
+  http*://*/share/*t=*) echo "  ✓ 공유 url 절대 주소" ;;
+  *) echo "  ✗ 공유 url 이 절대 주소가 아닙니다"; FAIL=$((FAIL + 1)) ;;
+esac
+# 미리보기 카드를 만드는 쪽에는 세션 쿠키가 없습니다 → 쿠키 없이 열려야 합니다.
+check 200 "GET $SHARE_PATH (쿠키 없이)" curl "$BASE$SHARE_PATH"
+case "$LAST_BODY" in
+  *'property="og:title"'*'property="og:description"'*) echo "  ✓ 미리보기 메타데이터 있음" ;;
+  *) echo "  ✗ og 메타데이터가 없습니다 — 대화방에 카드가 안 뜹니다"; FAIL=$((FAIL + 1)) ;;
+esac
+check 404 "GET /share/$CLUB/$MONTH (서명 토큰 없이)" curl "$BASE/share/$CLUB/$MONTH"
+check 404 "GET share 꾸러미 (비회원)" curl -b "$JAR_C" "$BASE/api/clubs/$CLUB/share?month=$MONTH"
+
+step "9. 확정 → 잠금 확인 → 수정 모드 → 확정 저장"
 check 200 "POST confirm" curl -b "$JAR_B" -X POST "$BASE/api/clubs/$CLUB/confirm?month=$MONTH"
 check 409 "PUT availability (잠긴 달)" curl -b "$JAR_B" -X PUT "$BASE/api/clubs/$CLUB/availability" \
   -H 'Content-Type: application/json' -d "{\"date\":\"$MONTH-20\",\"status\":\"no\"}"
@@ -94,12 +114,12 @@ check 200 "POST unconfirm (일정 변경)" curl -b "$JAR_B" -X POST "$BASE/api/c
 check 200 "POST confirm + entries (확정 저장)" curl -b "$JAR_B" -X POST "$BASE/api/clubs/$CLUB/confirm?month=$MONTH" \
   -H 'Content-Type: application/json' -d "{\"entries\":{\"$MONTH-20\":\"maybe\"}}"
 
-step "9. 회장 전용 API 는 일반 회원이 못 쓴다"
+step "10. 회장 전용 API 는 일반 회원이 못 쓴다"
 check 403 "POST invites (회원)" curl -b "$JAR_B" -X POST "$BASE/api/clubs/$CLUB/invites" \
   -H 'Content-Type: application/json' -d '{}'
 check 403 "GET /api/admin/stats (회원)" curl -b "$JAR_B" "$BASE/api/admin/stats"
 
-step "10. 정리 — 동아리 삭제 (이름 확인 필요)"
+step "11. 정리 — 동아리 삭제 (이름 확인 필요)"
 check 400 "DELETE club (이름 틀림)" curl -b "$JAR_A" -X DELETE "$BASE/api/clubs/$CLUB" \
   -H 'Content-Type: application/json' -d '{"name":"Wrong Name"}'
 check 200 "DELETE club (이름 맞음)" curl -b "$JAR_A" -X DELETE "$BASE/api/clubs/$CLUB" \

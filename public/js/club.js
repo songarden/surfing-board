@@ -4,6 +4,7 @@ import {
   shiftMonth, thisMonth, toast, toastError
 } from './ui.js';
 import { createChat } from './chat.js';
+import { openShareModal } from './share.js';
 // 오늘 판정은 ui.js 의 todayISO() 대신 서버가 준 summary.today 를 씁니다 — 브라우저 시계에
 // 기대면 사용자마다 "지난 날짜" 경계가 달라집니다. thisMonth() 는 첫 진입 월 결정에만 씁니다.
 
@@ -187,6 +188,19 @@ function hero() {
       el('div', { class: 'hero-cap' }, `추천 날짜 · ${label}`),
       title,
       el('div', { class: 'hero-sub' }, sub),
+      // 동호회의 실질적 소통 창구는 네이버 웍스 대화방입니다. 달력이 약속으로 이어지려면
+      // 추천 날짜를 여기서 바로 그쪽으로 넘길 수 있어야 합니다.
+      // 회원에게만 보입니다 — 링크를 만드는 API 가 소속을 요구합니다(소속 없는 서비스 관리자 403).
+      state.cal.club.my_role
+        ? el('button', {
+          class: 'hero-share',
+          onclick: () => openShareModal({
+            clubId,
+            month: state.month,
+            pendingChanges: Object.keys(state.draft || {}).length
+          })
+        }, '💬 메신저로 공유')
+        : null,
       state.showAllBest && hidden > 0
         ? el('div', { class: 'hero-dates' },
           best.map((d) => el('span', {

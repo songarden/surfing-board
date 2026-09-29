@@ -184,6 +184,23 @@ describe('일정 / 달력', () => {
     assert.equal((await note('outsider')).status, 404);
     assert.equal((await note('anon')).status, 401);
   });
+
+  // 만들어진 링크 자체는 로그인 없이 열립니다(메신저 미리보기 크롤러에 쿠키가 없어서).
+  // 그래서 **누가 링크를 만들 수 있는가** 가 유일한 관문입니다 — 여기서 새면 뒤가 없습니다.
+  test('추천 날짜 공유 링크 만들기 — 회원·회장·(소속된)서비스 관리자만', async () => {
+    const link = (as) => call('GET', `/api/clubs/${f.club.id}/share?month=${MONTH}`, { as });
+
+    assert.equal((await link('member')).status, 200);
+    assert.equal((await link('pres')).status, 200);
+    assert.equal((await link('svcMember')).status, 200);
+
+    const svc = await link('svc');
+    assert.equal(svc.status, 403, '소속되지 않은 서비스 관리자는 링크를 만들 수 없습니다');
+    assert.equal(svc.body.code, 'NOT_A_MEMBER');
+
+    assert.equal((await link('outsider')).status, 404, '비회원에게는 존재를 숨김');
+    assert.equal((await link('anon')).status, 401);
+  });
 });
 
 // ==========================================================================

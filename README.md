@@ -48,6 +48,7 @@
 | 🎉 **풀파티 · 추천 날짜** | 전원 가능한 날을 강조하고, 상단 히어로에 후보 날짜를 뽑아 줍니다 |
 | 🔒 **월 단위 확정** | "내 일정 확정"으로 그 달을 잠그고 "일정 변경"으로 다시 엽니다. `이번 달 확인 4/5` 와 미확인 명단이 보입니다 |
 | 💬 **동아리 채팅** | WebSocket 실시간. @멘션 · 읽음 표시 · 안 읽은 배지 · 메시지 수정/삭제 |
+| 📤 **메신저로 공유** | 추천 날짜를 사내 메신저(네이버 웍스) 대화방에 올립니다. 링크 미리보기 카드에 추천 요일·가능 인원이 그대로 뜹니다 |
 | 🏢 **멀티 동아리** | 한 사람이 여러 동아리에 속하고, 동아리마다 별도 달력을 가집니다 |
 | 👑 **3단계 권한** | 서비스 관리자(전역) / 동아리 회장(동아리당 1명) / 일반 회원 |
 | 🔗 **초대 링크 가입** | 동아리 참여는 만료·사용횟수가 있는 초대 링크로만 됩니다 |
@@ -142,9 +143,9 @@ surfboard-scheduler/
 │  ├─ db.js                   sqlite 연결 + 마이그레이션 실행기
 │  ├─ auth.js                 비밀번호 해시, 세션 쿠키, requireAuth·requireServiceAdmin
 │  ├─ ws.js                   WebSocket 업그레이드 · 멤버십 검증 · 룸 관리
-│  ├─ lib/                    permissions · policies · holidays · calendar · chat · realtime …
+│  ├─ lib/                    permissions · policies · holidays · calendar · chat · realtime · share …
 │  ├─ migrations/             001_init · 002_multiclub · 003_chat
-│  └─ routes/                 auth · clubs · calendar · chat · invites · notices · me · admin
+│  └─ routes/                 auth · clubs · calendar · chat · invites · notices · me · admin · share
 │
 ├─ public/                    빌드 도구 없는 순수 프론트엔드 — 8화면
 │  ├─ *.html                  login · signup · invite · clubs · club · club-admin · account · admin
@@ -153,7 +154,7 @@ surfboard-scheduler/
 │  └─ fonts/                  Pretendard Variable · Space Grotesk (자체 호스팅, OFL)
 │
 ├─ scripts/                   create-user · reset-password · backup · smoke.sh
-├─ tests/                     node:test — 인증 · 권한 · 달력 API · 채팅
+├─ tests/                     node:test — 인증 · 권한 · 달력 API · 채팅 · 공유
 └─ data/                      surfboard.db 가 생기는 곳 (도커 볼륨) + backups/
 ```
 
@@ -185,7 +186,7 @@ npm run user:passwd -- gildong                          # 비밀번호 초기화
 
 ## 🧪 테스트
 
-`node:test` 로 인증·권한 가드·달력 집계·채팅을 검증합니다.
+`node:test` 로 인증·권한 가드·달력 집계·채팅·메신저 공유를 검증합니다.
 
 ```bash
 npm test          # 컨테이너 안에서

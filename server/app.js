@@ -9,6 +9,7 @@ import { noticeRoutes } from './routes/notices.routes.js';
 import { meRoutes } from './routes/me.routes.js';
 import { adminRoutes } from './routes/admin.routes.js';
 import { chatRoutes } from './routes/chat.routes.js';
+import { shareRoutes } from './routes/share.routes.js';
 
 export function createApp() {
   const app = express();
@@ -48,6 +49,12 @@ export function createApp() {
   app.use('/api/me', meRoutes);
   app.use('/api/admin', adminRoutes);
   app.use('/api', (req, res) => res.status(404).json({ error: '없는 API 입니다.' }));
+
+  // 추천 날짜 공유 페이지. **로그인 없이** 열립니다 — 메신저의 미리보기 크롤러에는 세션 쿠키가
+  // 없어서, 인증을 걸면 대화방에 카드가 영영 안 뜹니다. 나가는 값은 집계 숫자뿐입니다
+  // (이름·개인 일정 없음). 링크는 (club_id, month) 서명 토큰으로 잠급니다 — server/lib/share.js.
+  // 정적 파일과 '*' 폴백보다 **위**에 있어야 /clubs.html 로 리다이렉트되지 않습니다.
+  app.use('/share', shareRoutes);
 
   const pub = path.join(process.cwd(), 'public');
   // 폰트는 안 바뀌니 오래 캐시하고, HTML·CSS·JS 는 매번 검증합니다.
